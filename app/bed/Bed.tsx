@@ -81,7 +81,7 @@ export const Bed = memo(
 
     const { gestureHandler, translation, state } = usePanGestureHandler();
 
-    const { metersToY, metersToX, xToMeters } = useHelpers();
+    const { metersToY, metersToX, xToMeters, yToMeters } = useHelpers();
 
     const translateX = cond(
       and(eq(isSelectedValue, 1), eq(state, State.ACTIVE)),
@@ -89,14 +89,21 @@ export const Bed = memo(
       0,
     );
 
+    const translateY = cond(
+      and(eq(isSelectedValue, 1), eq(state, State.ACTIVE)),
+      translation.y,
+      0,
+    );
+
     useOnPanEnd(
       state,
-      call([translation.x], (tX) => {
+      call([translation.x, translation.y], ([tX, tY]) => {
         if (isSelected) {
           dispatch(
             updateBed({
               id,
               x: x + xToMeters(tX),
+              y: y + yToMeters(tY),
             }),
           );
         }
@@ -114,7 +121,7 @@ export const Bed = memo(
               top: metersToY(y),
               width: metersToX(width),
               height: metersToY(height),
-              transform: [{ translateX }],
+              transform: [{ translateX }, { translateY }],
               zIndex,
             },
             isSelected && styles.bedSelected,

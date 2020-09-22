@@ -21,7 +21,6 @@ export type LayoutState = {
 
 export const useTypedSelector: TypedUseSelectorHook<LayoutState> = useSelector;
 
-console.log([...new Array(10)]);
 const initialState: LayoutState = {
   plot: {
     width: 6,
