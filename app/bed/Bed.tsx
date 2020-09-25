@@ -94,7 +94,11 @@ export const Bed = memo((bed: BedType) => {
 
   const offsetValue = useValue(metersToX(offset));
 
-  const { gestureHandler, translation, state } = usePanGestureHandler();
+  const {
+    gestureHandler,
+    translation,
+    state: panState,
+  } = usePanGestureHandler();
 
   const handlers: { [key in Handlers]: any } = {
     [Handlers.topLeft]: usePanGestureHandler(),
@@ -102,18 +106,6 @@ export const Bed = memo((bed: BedType) => {
     [Handlers.topRight]: usePanGestureHandler(),
     [Handlers.bottomRight]: usePanGestureHandler(),
   };
-
-  const translateX = cond(
-    and(eq(isSelectedValue, 1), eq(state, State.ACTIVE)),
-    translation.x,
-    0,
-  );
-
-  const translateY = cond(
-    and(eq(isSelectedValue, 1), eq(state, State.ACTIVE)),
-    translation.y,
-    0,
-  );
 
   const activeHandler = cond(
     eq(handlers[Handlers.topLeft].state, State.ACTIVE),
@@ -168,6 +160,18 @@ export const Bed = memo((bed: BedType) => {
     ),
   );
 
+  const translateX = cond(
+    and(eq(isSelectedValue, 1), eq(panState, State.ACTIVE)),
+    translation.x,
+    0,
+  );
+
+  const translateY = cond(
+    and(eq(isSelectedValue, 1), eq(panState, State.ACTIVE)),
+    translation.y,
+    0,
+  );
+
   const finalLeft = cond(
     or(
       eq(activeHandler, Handlers.topLeft),
@@ -219,7 +223,7 @@ export const Bed = memo((bed: BedType) => {
   );
 
   useOnPanEnd(
-    state,
+    panState,
     call([translation.x, translation.y], ([tX, tY]) => {
       if (isSelected) {
         dispatch(
@@ -231,7 +235,7 @@ export const Bed = memo((bed: BedType) => {
         );
       }
     }),
-    [state, translation, bed, isSelected],
+    [panState, translation, bed, isSelected],
   );
 
   return (
@@ -252,17 +256,14 @@ export const Bed = memo((bed: BedType) => {
         <>
           {Object.values(Handlers)
             .filter((h): h is Handlers => typeof h === 'number')
-            .map(
-              (handlerType: Handlers) =>
-                handlers[handlerType] && (
-                  <Handler
-                    bed={bed}
-                    key={handlerType}
-                    handler={handlers[handlerType]}
-                    type={handlerType}
-                  />
-                ),
-            )}
+            .map((handlerType: Handlers) => (
+              <Handler
+                key={handlerType}
+                handler={handlers[handlerType]}
+                type={handlerType}
+                bed={bed}
+              />
+            ))}
         </>
       )}
       <PanGestureHandler {...gestureHandler}>
