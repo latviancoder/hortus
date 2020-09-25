@@ -117,8 +117,6 @@ export const Canvas: FC = (props) => {
 
 const styles = StyleSheet.create({
   canvas: {
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'white',
   },
 });

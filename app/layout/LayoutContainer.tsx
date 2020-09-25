@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { useDimensions } from "../useDimensions";
-import { Layout } from "./Layout";
-import { layout, LayoutState, useTypedSelector } from "../reducer";
+import { useDimensions } from '../useDimensions';
+import { Layout } from './Layout';
+import { layout, LayoutState, useTypedSelector } from '../reducer';
 
 export const LayoutContainer = () => {
   const plot = useTypedSelector(({ plot }) => plot);
@@ -34,7 +34,7 @@ export const LayoutContainer = () => {
     }
 
     // todo better
-    dispatch(actions.setOffset(plot.width / 20));
+    dispatch(actions.setOffset(plot.width / 30));
   }, [plot, dimensions]);
 
   if (!dimensions || !canvas) {

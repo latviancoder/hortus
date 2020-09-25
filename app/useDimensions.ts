@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 
 export enum Orientation {
   Portrait = 'Portrait',
-  Landscape = 'Landscape'
+  Landscape = 'Landscape',
 }
 
 export type DimensionsType = {
@@ -22,7 +22,7 @@ export const useDimensions = () => {
       orientation:
         Dimensions.get('window').width < Dimensions.get('window').height
           ? Orientation.Portrait
-          : Orientation.Landscape
+          : Orientation.Landscape,
     });
   };
 

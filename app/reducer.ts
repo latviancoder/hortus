@@ -15,37 +15,38 @@ export type LayoutState = {
     width: number;
     height: number;
   };
-  offset?: number;
+  offset: number;
   mode: Mode;
 };
 
 export const useTypedSelector: TypedUseSelectorHook<LayoutState> = useSelector;
 
 const initialState: LayoutState = {
+  offset: 0,
   plot: {
     width: 6,
     height: 6,
   },
   beds: [
     {
-      x: 2,
-      y: 2,
-      width: 2,
-      height: 2,
-      id: generate(),
+      x: 0,
+      y: 0,
+      width: 1,
+      height: 1,
+      id: '1',
       zIndex: 1,
       isSelected: false,
     },
     {
       x: 1,
       y: 1,
-      width: 2,
-      height: 2,
-      id: generate(),
+      width: 1,
+      height: 1,
+      id: '2',
       zIndex: 2,
       isSelected: false,
     },
-    ...[...new Array(30)].map((_, i) => ({
+    ...[...new Array(50)].map((_, i) => ({
       x: 4,
       y: 4,
       width: 1,
