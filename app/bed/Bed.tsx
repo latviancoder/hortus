@@ -1,4 +1,4 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import Animated, {
   add,
@@ -26,6 +26,9 @@ import { BedType, Handlers, Mode } from '../types';
 import { useHelpers } from '../helpers';
 import { layout, useTypedSelector } from '../reducer';
 import { Handler } from '../handler/Handler';
+import { throttle } from 'throttle-debounce';
+import { BedContent, BedContentConnected } from './BedContent';
+import { is } from 'immer/dist/utils/common';
 
 const usePrevState = (
   state: Animated.Value<import('react-native-gesture-handler').State>,
@@ -77,14 +80,16 @@ const useOnPanStart = (
 export const Bed = memo((bed: BedType) => {
   const { id, isSelected, zIndex } = bed;
 
+  const { metersToY, metersToX, xToMeters, yToMeters } = useHelpers();
+
   const offset = useTypedSelector(({ offset }) => offset);
 
   const {
-    actions: { updateBed },
+    actions: { updateBed, setCurrent },
   } = layout;
   const dispatch = useDispatch();
 
-  const { metersToY, metersToX, xToMeters, yToMeters } = useHelpers();
+  const setCurrentThrottled = throttle(100, (num) => dispatch(setCurrent(num)));
 
   const isSelectedValue = new Value(isSelected ? 1 : 0);
   const widthValue = new Value(metersToX(bed.width));
@@ -222,6 +227,24 @@ export const Bed = memo((bed: BedType) => {
     ),
   );
 
+  // While resizing update bed height and width through redux
+  // to avoid local state messing with dragging performance.
+  useCode(
+    () =>
+      call(
+        [finalWidth, finalHeight, handlerTranslateX],
+        ([width, height, hTX]) => {
+          if (isSelected && hTX !== 0) {
+            setCurrentThrottled({
+              width: xToMeters(width),
+              height: yToMeters(height),
+            });
+          }
+        },
+      ),
+    [finalHeight, finalWidth, isSelected, handlerTranslateX],
+  );
+
   useOnPanEnd(
     panState,
     call([translation.x, translation.y], ([tX, tY]) => {
@@ -274,7 +297,11 @@ export const Bed = memo((bed: BedType) => {
             isSelected && styles.bedSelected,
           ]}
         >
-          <Text>{bed.id}</Text>
+          {isSelected ? (
+            <BedContentConnected />
+          ) : (
+            <BedContent width={bed.width} height={bed.height} />
+          )}
         </Animated.View>
       </PanGestureHandler>
     </Animated.View>

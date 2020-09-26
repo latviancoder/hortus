@@ -17,6 +17,10 @@ export type LayoutState = {
   };
   offset: number;
   mode: Mode;
+  current: {
+    width: number;
+    height: number;
+  };
 };
 
 export const useTypedSelector: TypedUseSelectorHook<LayoutState> = useSelector;
@@ -58,6 +62,10 @@ const initialState: LayoutState = {
   ],
   points: [],
   mode: Mode.NOTHING,
+  current: {
+    width: 0,
+    height: 0,
+  },
 };
 
 export const layout = createSlice({
@@ -85,13 +93,17 @@ export const layout = createSlice({
     },
 
     selectBed(state, { payload }: PayloadAction<string>) {
-      state.beds = state.beds.map((bed) => {
-        const { id } = bed;
-        return {
-          ...bed,
-          isSelected: id === payload,
-        };
-      });
+      state.beds = state.beds.map((bed) => ({
+        ...bed,
+        isSelected: bed.id === payload,
+      }));
+
+      const selectedBed = state.beds.find((bed) => bed.id === payload)!;
+
+      state.current = {
+        width: selectedBed.width,
+        height: selectedBed.height,
+      };
     },
 
     deselectAllBeds(state) {
@@ -103,6 +115,13 @@ export const layout = createSlice({
 
     setMode(state, { payload }: PayloadAction<Mode>) {
       state.mode = payload;
+    },
+
+    setCurrent(
+      state,
+      { payload }: PayloadAction<{ width: number; height: number }>,
+    ) {
+      state.current = payload;
     },
   },
 });

@@ -78,6 +78,7 @@ export const Canvas: FC = (props) => {
       cond(
         eq(tapState, State.END),
         call([position.x, position.y], ([x, y]) => {
+          console.log(x, y);
           const clickedBeds = beds
             .reduce<BedType[]>((acc, bed) => {
               if (
