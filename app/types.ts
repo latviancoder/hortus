@@ -14,10 +14,8 @@ export type BedType = {
 };
 
 export enum Mode {
-  NOTHING,
-  BED_MOVING,
-  BED_CREATING,
-  RESIZING,
+  INITIAL,
+  CREATING,
 }
 
 export enum Handlers {

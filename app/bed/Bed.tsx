@@ -1,5 +1,5 @@
-import React, { memo, useMemo, useState } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import React, { memo } from 'react';
+import { StyleSheet } from 'react-native';
 import Animated, {
   add,
   and,
@@ -8,7 +8,6 @@ import Animated, {
   divide,
   eq,
   or,
-  set,
   sub,
   useCode,
   Value,
@@ -16,66 +15,15 @@ import Animated, {
 import {
   usePanGestureHandler,
   useValue,
-  useDebug,
-  // @ts-ignore
 } from 'react-native-redash/lib/module/v1';
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { useDispatch } from 'react-redux';
-
-import { BedType, Handlers, Mode } from '../types';
-import { useHelpers } from '../helpers';
+import { BedType, Handlers } from '../types';
+import { useHelpers, useOnPanEnd } from '../helpers';
 import { layout, useTypedSelector } from '../reducer';
 import { Handler } from '../handler/Handler';
 import { throttle } from 'throttle-debounce';
 import { BedContent, BedContentConnected } from './BedContent';
-import { is } from 'immer/dist/utils/common';
-
-const usePrevState = (
-  state: Animated.Value<import('react-native-gesture-handler').State>,
-) => {
-  const prevState = useValue(0);
-
-  useCode(() => set(prevState, state), [state]);
-
-  return prevState;
-};
-
-export const useOnPanEnd = (
-  state: Animated.Value<import('react-native-gesture-handler').State>,
-  cb: Animated.Node<any>,
-  dependencies: any[],
-) => {
-  useCode(
-    () => cond(and(eq(state, State.END), eq(prevState, State.ACTIVE)), cb),
-    dependencies,
-  );
-
-  const prevState = usePrevState(state);
-};
-
-const useOnPanStart = (
-  state: Animated.Value<import('react-native-gesture-handler').State>,
-  cb: Animated.Node<any>,
-  dependencies: any[],
-) => {
-  useCode(
-    () =>
-      cond(
-        and(
-          eq(state, State.ACTIVE),
-          or(
-            eq(prevState, State.UNDETERMINED),
-            eq(prevState, State.END),
-            eq(prevState, State.BEGAN),
-          ),
-        ),
-        cb,
-      ),
-    dependencies,
-  );
-
-  const prevState = usePrevState(state);
-};
 
 export const Bed = memo((bed: BedType) => {
   const { id, isSelected, zIndex } = bed;
@@ -316,13 +264,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   bed: {
-    backgroundColor: 'gold',
     position: 'absolute',
-    alignItems: 'center',
-    justifyContent: 'center',
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'gray',
   },
   bedSelected: {
     borderColor: 'black',

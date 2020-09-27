@@ -3,13 +3,12 @@ import React, { memo } from 'react';
 import { useValue } from 'react-native-redash/lib/module/v1';
 import Animated, { call, divide } from 'react-native-reanimated';
 import { PanGestureHandler } from 'react-native-gesture-handler';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { layout, useTypedSelector } from '../reducer';
-import { useHelpers } from '../helpers';
+import {useHelpers, useOnPanEnd} from '../helpers';
 import { BedType, Handlers } from '../types';
-import { useOnPanEnd } from '../bed/Bed';
 
 type Props = {
   type: Handlers;
@@ -34,18 +33,22 @@ export const Handler = memo(({ type, handler, bed }: Props) => {
     [Handlers.topLeft]: {
       top: 0,
       left: 0,
+      cursor: 'nwse-resize',
     },
     [Handlers.topRight]: {
       top: 0,
       right: 0,
+      cursor: 'nesw-resize',
     },
     [Handlers.bottomLeft]: {
       bottom: 0,
       left: 0,
+      cursor: 'nesw-resize',
     },
     [Handlers.bottomRight]: {
       bottom: 0,
       right: 0,
+      cursor: 'nwse-resize',
     },
   };
 

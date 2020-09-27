@@ -1,24 +1,9 @@
-import { useTypedSelector } from './reducer';
-import { useCallback } from 'react';
-
-import { BedType, Handlers, Point } from './types';
-
-export const getHandlers = (
-  bed: BedType,
-): { [key: string]: { x: number; y: number } } => {
-  const { width, height } = bed;
-
-  return {
-    [Handlers.topLeft]: { x: 0, y: 0 },
-    [Handlers.top]: { x: width / 2, y: 0 },
-    [Handlers.topRight]: { x: width, y: 0 },
-    [Handlers.right]: { x: width, y: height / 2 },
-    [Handlers.bottomRight]: { x: width, y: height },
-    [Handlers.bottom]: { x: width / 2, y: height },
-    [Handlers.bottomLeft]: { x: 0, y: height },
-    [Handlers.left]: { x: 0, y: height / 2 },
-  };
-};
+import {useTypedSelector} from './reducer';
+import {useCallback} from 'react';
+import {Point} from './types';
+import {useValue} from 'react-native-redash/lib/module/v1';
+import Animated, {and, cond, eq, set, useCode} from 'react-native-reanimated';
+import {State} from "react-native-gesture-handler";
 
 export const distanceBetweenPointAndSegment = (
   { x, y }: Point,
@@ -118,4 +103,25 @@ export const useHelpers = () => {
     metersToX,
     metersToY,
   };
+};
+
+export const usePrevState = (state: any) => {
+  const prevState = useValue(state);
+
+  useCode(() => set(prevState, state), [state]);
+
+  return prevState;
+};
+
+export const useOnPanEnd = (
+  state: Animated.Value<import('react-native-gesture-handler').State>,
+  cb: Animated.Node<any>,
+  dependencies: any[],
+) => {
+  useCode(
+    () => cond(and(eq(state, State.END), eq(prevState, State.ACTIVE)), cb),
+    dependencies,
+  );
+
+  const prevState = usePrevState(state);
 };

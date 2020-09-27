@@ -1,10 +1,9 @@
 import { TypedUseSelectorHook, useSelector } from 'react-redux';
-import { generate } from 'shortid';
+import shortid, { generate } from 'shortid';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BedType, Mode, Point } from './types';
+import { BedType, Mode } from './types';
 
 export type LayoutState = {
-  points: Point[];
   beds: BedType[];
 
   plot: {
@@ -17,7 +16,7 @@ export type LayoutState = {
   };
   offset: number;
   mode: Mode;
-  current: {
+  current?: {
     width: number;
     height: number;
   };
@@ -29,12 +28,12 @@ const initialState: LayoutState = {
   offset: 0,
   plot: {
     width: 6,
-    height: 6,
+    height: 3,
   },
   beds: [
     {
-      x: 0,
-      y: 0,
+      x: 0.5,
+      y: 0.3,
       width: 1,
       height: 1,
       id: '1',
@@ -42,30 +41,25 @@ const initialState: LayoutState = {
       isSelected: false,
     },
     {
-      x: 1,
+      x: 3,
       y: 1,
-      width: 1,
+      width: 2,
       height: 1,
       id: '2',
       zIndex: 2,
       isSelected: false,
     },
-    ...[...new Array(50)].map((_, i) => ({
-      x: 4,
-      y: 4,
-      width: 1,
-      height: 1,
-      id: generate(),
-      zIndex: i + 3,
-      isSelected: false,
-    })),
+    // ...[...new Array(50)].map((_, i) => ({
+    //   x: 4,
+    //   y: 4,
+    //   width: 1,
+    //   height: 1,
+    //   id: generate(),
+    //   zIndex: i + 3,
+    //   isSelected: false,
+    // })),
   ],
-  points: [],
-  mode: Mode.NOTHING,
-  current: {
-    width: 0,
-    height: 0,
-  },
+  mode: Mode.INITIAL,
 };
 
 export const layout = createSlice({
@@ -81,6 +75,27 @@ export const layout = createSlice({
 
     setOffset(state, { payload }: PayloadAction<number>) {
       state.offset = payload;
+    },
+
+    createBed(
+      state,
+      {
+        payload,
+      }: PayloadAction<{ x: number; y: number; width: number; height: number }>,
+    ) {
+      state.mode = Mode.INITIAL;
+
+      const largestZIndex = state.beds.sort((a, b) => b.zIndex - a.zIndex)[0]
+        .zIndex;
+
+      const newBed: BedType = {
+        ...payload,
+        id: shortid(),
+        zIndex: largestZIndex + 1,
+        isSelected: true,
+      };
+
+      state.beds.push(newBed);
     },
 
     updateBed(state, { payload }: PayloadAction<Partial<BedType>>) {
@@ -104,6 +119,8 @@ export const layout = createSlice({
         width: selectedBed.width,
         height: selectedBed.height,
       };
+
+      state.mode = Mode.INITIAL;
     },
 
     deselectAllBeds(state) {
@@ -111,6 +128,8 @@ export const layout = createSlice({
         ...bed,
         isSelected: false,
       }));
+
+      state.current = undefined;
     },
 
     setMode(state, { payload }: PayloadAction<Mode>) {
@@ -119,7 +138,7 @@ export const layout = createSlice({
 
     setCurrent(
       state,
-      { payload }: PayloadAction<{ width: number; height: number }>,
+      { payload }: PayloadAction<{ width: number; height: number } | undefined>,
     ) {
       state.current = payload;
     },
