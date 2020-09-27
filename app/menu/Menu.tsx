@@ -5,6 +5,7 @@ import { TouchableWithoutFeedback, View, Platform } from 'react-native';
 import { CabbageIcon } from '../icons/CabbageIcons';
 import { layout, useTypedSelector } from '../reducer';
 import { Mode } from '../types';
+import { Colors } from '../colors';
 
 export const Menu = () => {
   const mode = useTypedSelector(({ mode }) => mode);
@@ -15,7 +16,7 @@ export const Menu = () => {
     <View
       style={{
         width: 50,
-        borderColor: '#e6ecf0',
+        borderColor: Colors.light,
         borderRightWidth: 1,
       }}
     >
@@ -28,7 +29,8 @@ export const Menu = () => {
         <View
           style={{
             padding: 10,
-            backgroundColor: mode === Mode.CREATING ? '#e6ecf0' : 'transparent',
+            backgroundColor:
+              mode === Mode.CREATING ? Colors.light : 'transparent',
           }}
         >
           <View style={{ width: 30, height: 30 }}>

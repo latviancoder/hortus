@@ -36,6 +36,7 @@ import {
 import { BedType, Mode } from '../types';
 import { throttle } from 'throttle-debounce';
 import { BedContentConnected } from '../bed/BedContent';
+import {Colors} from "../colors";
 
 const useOnPanStart = (
   state: Animated.Value<import('react-native-gesture-handler').State>,
@@ -246,6 +247,6 @@ const styles = StyleSheet.create({
   canvas: {
     backgroundColor: 'white',
     borderWidth: 1,
-    borderColor: '#e6ecf0',
+    borderColor: Colors.light,
   },
 });

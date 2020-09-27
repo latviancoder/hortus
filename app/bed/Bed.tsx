@@ -242,7 +242,6 @@ export const Bed = memo((bed: BedType) => {
           style={[
             styles.bed,
             { width: finalWidth, height: finalHeight, zIndex },
-            isSelected && styles.bedSelected,
           ]}
         >
           {isSelected ? (
@@ -259,16 +258,11 @@ export const Bed = memo((bed: BedType) => {
 const styles = StyleSheet.create({
   bedCotainer: {
     position: 'absolute',
-    backgroundColor: 'rgba(52, 52, 52, 0.1)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   bed: {
     position: 'absolute',
     overflow: 'hidden',
-  },
-  bedSelected: {
-    borderColor: 'black',
-    backgroundColor: 'orange',
   },
 });

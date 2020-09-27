@@ -1,15 +1,24 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTypedSelector } from '../reducer';
+import { Colors } from '../colors';
 
 type Props = {
   width: number;
   height: number;
+  isSelected?: boolean;
 };
 
-export const BedContent = ({ width, height }: Props) => {
+export const BedContent = ({ width, height, isSelected }: Props) => {
   return (
-    <View style={styles.content}>
+    <View
+      style={[
+        styles.content,
+        isSelected && {
+          backgroundColor: Colors.green,
+        },
+      ]}
+    >
       <Text>
         {Math.round(width * 100) / 100} {Math.round(height * 100) / 100}
       </Text>
@@ -24,16 +33,14 @@ export const BedContentConnected = () => {
     return null;
   }
 
-  return <BedContent {...current} />;
+  return <BedContent {...current} isSelected={true} />;
 };
 
 const styles = StyleSheet.create({
   content: {
     flex: 1,
-    backgroundColor: 'gold',
+    backgroundColor: Colors.light,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'gray',
   },
 });

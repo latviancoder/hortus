@@ -1,13 +1,13 @@
 import React, { memo } from 'react';
 // @ts-ignore
 import { useValue } from 'react-native-redash/lib/module/v1';
-import Animated, { call, divide } from 'react-native-reanimated';
+import Animated, { call, divide, round } from 'react-native-reanimated';
 import { PanGestureHandler } from 'react-native-gesture-handler';
-import { StyleSheet, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native';
 import { useDispatch } from 'react-redux';
 
 import { layout, useTypedSelector } from '../reducer';
-import {useHelpers, useOnPanEnd} from '../helpers';
+import { useHelpers, useOnPanEnd } from '../helpers';
 import { BedType, Handlers } from '../types';
 
 type Props = {
@@ -95,21 +95,36 @@ export const Handler = memo(({ type, handler, bed }: Props) => {
     <PanGestureHandler {...gestureHandler}>
       <Animated.View
         style={[
-          styles.handler,
+          styles.handlerContainer,
           {
-            width: divide(offsetValue, 2),
-            height: divide(offsetValue, 2),
+            width: round(divide(offsetValue, 2)),
+            height: round(divide(offsetValue, 2)),
             ...handlerStyles[type],
           },
         ]}
-      />
+      >
+        <Animated.View
+          style={[
+            styles.handler,
+            {
+              width: round(divide(offsetValue, 3)),
+              height: round(divide(offsetValue, 3)),
+            },
+          ]}
+        />
+      </Animated.View>
     </PanGestureHandler>
   );
 });
 
 const styles = StyleSheet.create({
-  handler: {
-    backgroundColor: 'red',
+  handlerContainer: {
     position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  handler: {
+    borderColor: '#aaa',
+    borderWidth: 2,
   },
 });

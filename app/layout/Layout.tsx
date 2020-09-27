@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, StyleSheet, LayoutChangeEvent } from 'react-native';
+import { View, StyleSheet, LayoutChangeEvent, Dimensions } from 'react-native';
 
 import { layout, useTypedSelector } from '../reducer';
 import { Bed } from '../bed/Bed';
 import { Canvas } from '../canvas/Canvas';
 import { Menu } from '../menu/Menu';
 import { useDispatch } from 'react-redux';
+import { useHelpers } from '../helpers';
 
 export const Layout = () => {
   const plot = useTypedSelector(({ plot }) => plot);
@@ -31,7 +32,7 @@ export const Layout = () => {
       canvasHeight = width * (plot.height / plot.width);
     }
 
-    dispatch(setOffset(Math.max(plot.width, plot.height) / 20));
+    dispatch(setOffset((plot.width / Dimensions.get('window').width) * 30));
     dispatch(setCanvasSize({ width: canvasWidth, height: canvasHeight }));
   };
 
